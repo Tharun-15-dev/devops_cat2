@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AttendX — IT Attendance System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-name">AttendX</span>
+    </div>
+    <nav class="nav">
+      <a href="#" class="nav-item active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item" data-tab="mark">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M16 11l2 2 4-4" stroke-width="2"/></svg>
+        Mark Attendance
+      </a>
+      <a href="#" class="nav-item" data-tab="records">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Records
+      </a>
+      <a href="#" class="nav-item" data-tab="employees">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Employees
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-card">
+        <div class="avatar" style="background:#1a1a2e;color:#6c63ff">AD</div>
+        <div>
+          <div class="admin-name">Admin</div>
+          <div class="admin-role">HR Manager</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div>
+        <h1 class="page-title" id="page-title">Dashboard</h1>
+        <p class="page-date" id="page-date"></p>
+      </div>
+      <div class="topbar-right">
+        <div class="clock" id="clock">--:--:--</div>
+        <select id="dept-filter" class="dept-select">
+          <option value="All">All Departments</option>
+          <option value="Frontend">Frontend</option>
+          <option value="Backend">Backend</option>
+          <option value="DevOps">DevOps</option>
+          <option value="QA">QA</option>
+          <option value="Design">Design</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- DASHBOARD TAB -->
+    <section id="tab-dashboard" class="tab-section active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Employees</div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-sub">Registered</div>
+        </div>
+        <div class="stat-card present">
+          <div class="stat-label">Present</div>
+          <div class="stat-value" id="stat-present">0</div>
+          <div class="stat-sub" id="pct-present">0%</div>
+        </div>
+        <div class="stat-card absent">
+          <div class="stat-label">Absent</div>
+          <div class="stat-value" id="stat-absent">0</div>
+          <div class="stat-sub" id="pct-absent">0%</div>
+        </div>
+        <div class="stat-card late">
+          <div class="stat-label">Late</div>
+          <div class="stat-value" id="stat-late">0</div>
+          <div class="stat-sub" id="pct-late">0%</div>
+        </div>
+      </div>
+
+      <div class="chart-row">
+        <div class="panel">
+          <div class="panel-header">
+            <span>Today's Attendance</span>
+            <span class="panel-date" id="today-label"></span>
+          </div>
+          <canvas id="barChart" height="200"></canvas>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Department Breakdown</div>
+          <canvas id="deptChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:1.5rem">
+        <div class="panel-header">Recent Activity</div>
+        <div id="activity-feed" class="activity-feed"></div>
+      </div>
+    </section>
+
+    <!-- MARK ATTENDANCE TAB -->
+    <section id="tab-mark" class="tab-section">
+      <div class="mark-layout">
+        <div class="panel mark-panel">
+          <div class="panel-header">Mark Attendance</div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="mark-date" />
+          </div>
+          <div class="form-group">
+            <label>Select Employee</label>
+            <select id="mark-emp">
+              <option value="">-- Choose Employee --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <div class="status-toggle">
+              <button class="stbtn active" data-status="Present">✓ Present</button>
+              <button class="stbtn" data-status="Late">⏰ Late</button>
+              <button class="stbtn" data-status="Absent">✗ Absent</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Note (optional)</label>
+            <input type="text" id="mark-note" placeholder="Add a note..." />
+          </div>
+          <button class="btn-primary" onclick="markAttendance()">Mark Attendance</button>
+        </div>
+
+        <div class="panel bulk-panel">
+          <div class="panel-header">
+            Bulk Mark — <span id="bulk-date-label"></span>
+            <button class="btn-small" onclick="bulkMark('Present')">All Present</button>
+          </div>
+          <div id="bulk-list" class="bulk-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECORDS TAB -->
+    <section id="tab-records" class="tab-section">
+      <div class="panel">
+        <div class="panel-header">
+          <span>Attendance Records</span>
+          <div class="filter-row">
+            <input type="date" id="filter-date" />
+            <select id="filter-status">
+              <option value="All">All Status</option>
+              <option value="Present">Present</option>
+              <option value="Late">Late</option>
+              <option value="Absent">Absent</option>
+            </select>
+            <button class="btn-small" onclick="exportCSV()">Export CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="records-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Note</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="records-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMPLOYEES TAB -->
+    <section id="tab-employees" class="tab-section">
+      <div class="panel">
+        <div class="panel-header">
+          <span>Employee Directory</span>
+          <button class="btn-primary small" onclick="openAddModal()">+ Add Employee</button>
+        </div>
+        <input type="text" id="emp-search" placeholder="Search employees..." style="margin-bottom:1rem;width:100%" oninput="renderEmployees()" />
+        <div class="emp-grid" id="emp-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Add Employee Modal -->
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal-box">
+      <h2 class="modal-title">Add Employee</h2>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="new-name" placeholder="e.g. Ravi Kumar" />
+      </div>
+      <div class="form-group">
+        <label>Employee ID</label>
+        <input type="text" id="new-id" placeholder="e.g. EMP-042" />
+      </div>
+      <div class="form-group">
+        <label>Department</label>
+        <select id="new-dept">
+          <option>Frontend</option>
+          <option>Backend</option>
+          <option>DevOps</option>
+          <option>QA</option>
+          <option>Design</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <input type="text" id="new-role" placeholder="e.g. Senior Developer" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="addEmployee()">Add Employee</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
